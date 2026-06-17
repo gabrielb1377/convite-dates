@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Convite especial</title>
+  <meta name="description" content="Um convite interativo para um encontro.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<body>
+  <div class="space-bg" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <main class="app-shell">
+    <section class="phone-frame" aria-live="polite">
+      <div class="phone-notch"></div>
+      <div class="screen-glow"></div>
+      <div class="mission-bar">
+        <span id="brand">DATE MISSION</span>
+        <span id="xp">0 XP</span>
+      </div>
+      <div id="screen" class="screen"></div>
+    </section>
+  </main>
+
+  <template id="intro-template">
+    <div class="float-hearts" aria-hidden="true"></div>
+    <img class="hero-image hero-dog-flower" src="assets/dog flor.png" alt="">
+    <div class="dark-card">
+      <p class="eyebrow">mensagem importante</p>
+      <h1 data-type="introTitulo">Tenho uma pergunta pra você.</h1>
+      <p class="lead" data-text="introDescricao"></p>
+      <button class="primary" data-action="mission"></button>
+    </div>
+  </template>
+
+  <template id="mission-template">
+    <img class="hero-image hero-small" src="assets/dog babao.jpg" alt="">
+    <div class="mission-card">
+      <p class="eyebrow">modo GTA</p>
+      <h1 data-type="missaoTitulo">MISSÃO INICIADA</h1>
+      <p class="lead" data-text="missaoSubtitulo"></p>
+      <ul class="objectives">
+        <li class="done">Abrir o site</li>
+        <li>Escolher uma data</li>
+        <li>Aceitar o convite</li>
+      </ul>
+      <button class="primary" data-action="question">continuar</button>
+    </div>
+  </template>
+
+  <template id="question-template">
+    <div class="float-hearts" aria-hidden="true"></div>
+    <div class="eye-container" aria-hidden="true">
+      <div class="eye"><div class="pupil"></div></div>
+      <div class="eye"><div class="pupil"></div></div>
+    </div>
+    <div class="dark-card">
+      <h2 data-type="pergunta">Você aceitaria ir a um date comigo?</h2>
+      <p class="lead" data-text="perguntaDescricao"></p>
+      <div class="button-row">
+        <button class="primary" data-action="yes"></button>
+        <button class="danger no-button" data-action="no-game">👀 não</button>
+      </div>
+      <button class="ghost" data-action="convince"></button>
+      <p class="convince-box" hidden data-text="argumento"></p>
+    </div>
+  </template>
+
+  <template id="yes-template">
+    <img class="hero-image hero-celebrate" src="assets/comemorando.jpg" alt="">
+    <div class="dark-card">
+      <h2>VOCÊ DISSE SIM? 🥹</h2>
+      <p class="lead">Eu estava esperando você dizer sim kkkk</p>
+      <button class="primary" data-action="date">próximo 💙</button>
+    </div>
+  </template>
+
+  <template id="date-template">
+    <div class="dark-card">
+      <p class="eyebrow">objetivo 1</p>
+      <h2 data-type="dataTitulo"></h2>
+      <p class="lead" data-text="dataDescricao"></p>
+      <form class="form-grid" data-form="date">
+        <label><span>Dia</span><input id="dateInput" type="date" required></label>
+        <label><span>Hora</span><select id="timeInput" required></select></label>
+        <button class="primary wide" type="submit">continuar</button>
+      </form>
+    </div>
+  </template>
+
+  <template id="mode-template">
+    <div class="dark-card">
+      <p class="eyebrow">objetivo 2</p>
+      <h2 data-type="modoTitulo"></h2>
+      <p class="lead" data-text="modoDescricao"></p>
+      <div class="button-row">
+        <button class="secondary" data-action="manual"></button>
+        <button class="primary" data-action="roulette"></button>
+      </div>
+    </div>
+  </template>
+
+  <template id="roulette-template">
+    <div class="dark-card">
+      <p class="eyebrow">roleta de encontro</p>
+      <div id="rouletteWheel" class="roulette-wheel">🎰</div>
+      <h2 id="rouletteTitle">Girando...</h2>
+      <p id="rouletteResult" class="lead">O destino está escolhendo.</p>
+      <button id="rouletteNext" class="primary" data-action="vibe" hidden>gostei, continuar</button>
+    </div>
+  </template>
+
+  <template id="place-template">
+    <div class="dark-card">
+      <p class="eyebrow">objetivo 2</p>
+      <h2 data-type="localTitulo"></h2>
+      <p class="lead" data-text="localDescricao"></p>
+      <div id="placeOptions" class="option-grid"></div>
+      <label class="suggestion"><span>Sugestão dela</span><input id="placeSuggestion" placeholder="escreve outro lugar"></label>
+      <button class="primary wide" data-action="save-place">continuar</button>
+    </div>
+  </template>
+
+  <template id="food-template">
+    <div class="dark-card">
+      <p class="eyebrow">objetivo 3</p>
+      <h2 data-type="comidaTitulo"></h2>
+      <p class="lead" data-text="comidaDescricao"></p>
+      <div id="foodOptions" class="option-grid"></div>
+      <label class="suggestion"><span>Sugestão dela</span><input id="foodSuggestion" placeholder="escreve outra comida"></label>
+      <button class="primary wide" data-action="save-food">continuar</button>
+    </div>
+  </template>
+
+  <template id="vibe-template">
+    <div class="dark-card">
+      <p class="eyebrow">objetivo 4</p>
+      <h2 data-type="vibeTitulo"></h2>
+      <div id="vibeOptions" class="option-stack"></div>
+    </div>
+  </template>
+
+  <template id="mind-template">
+    <div class="dark-card analyzing">
+      <p class="eyebrow">leitor de mente falso</p>
+      <h2 data-type="leitorTitulo"></h2>
+      <div class="scan-line"></div>
+      <p id="mindResult" class="lead"></p>
+      <button id="mindNext" class="primary" data-action="final" hidden>ver resultado</button>
+    </div>
+  </template>
+
+  <template id="final-template">
+    <img class="hero-image hero-us" src="assets/us.jpg" alt="">
+    <div class="dark-card final-card">
+      <p class="eyebrow">MISSÃO COMPLETA +500 XP</p>
+      <h2 data-type="finalTitulo"></h2>
+      <p class="lead" data-text="finalDescricao"></p>
+      <div id="summary" class="summary-list"></div>
+      <div class="countdown">
+        <span>Faltam:</span>
+        <strong id="countDays">0 dias</strong>
+        <strong id="countHours">0 horas</strong>
+        <strong id="countMinutes">0 minutos</strong>
+        <span>para o encontro ❤️</span>
+      </div>
+      <div id="fakeScare" class="fake-scare"></div>
+      <div class="tenor-wrap">
+        <img
+          src="assets/lego-batman-lego-batman-love.gif"
+          alt="Batman apaixonado"
+          class="final-gif">
+      </div>
+      <div class="button-row">
+        <button class="primary" data-action="email"></button>
+        <button class="secondary" data-action="whatsapp"></button>
+        <button class="ghost" data-action="copy"></button>
+      </div>
+      <p id="copyStatus" class="status" role="status"></p>
+    </div>
+  </template>
+
+  <template id="no-template">
+    <div class="dark-card">
+      <h2>Tudo bem.</h2>
+      <p class="lead">Obrigado por responder de verdade. Sem pressão, sem clima estranho.</p>
+      <button class="secondary" data-action="question">voltar</button>
+    </div>
+  </template>
+
+  <script src="personalizacao.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
