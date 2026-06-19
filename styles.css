@@ -698,3 +698,7 @@ select {
   margin:20px auto;
   border-radius:18px;
 }
+.phone-frame[data-step="final"] .button-row,
+.phone-frame[data-step="final"] #copyStatus {
+  display: none !important;
+}
